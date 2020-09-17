@@ -29,20 +29,34 @@ raw <- read_xlsx("~/gov50/class-2020-09-17/raw_data/class_enrollment_summary_by_
 
 en_fall_2020 <- raw %>%  
   clean_names() %>%
+  drop_na() %>%
   filter(u_grad >= 10) %>%
-  select(-c(grad, non_degree, x_reg, vus, employee)) %>%
-  arrange(desc(total))
+  select(-c(grad, non_degree, x_reg, vus, employee))
+
+highest_enrollment <- en_fall_2020 %>%  
+  arrange(desc(u_grad)) %>%
+  slice(1:1)
+# the class with the highest enrollment is...
+highest_enrollment
+
+gov_50_enrollment <- en_fall_2020 %>%
+  filter(course_title == "GOV 50") %>%
+  select(u_grad) %>%
+  sum(1:2)
+# Gov 50's enrollment is...
+gov_50_enrollment
 
 ```
-
+Course
 ### Scene 2
 
 **Prompt:** Create a bar plot of the 10 biggest courses. Order the plot so that courses appear in descending order. You will want to use coord_flip() to make your plot easy to read.
 
 ```{r}
-raw %>%
-  filter(course_title, total) %>%
-  arrange(desc(total))
+en_fall_2020 %>%
+  arrange(desc(u_grad)) %>%
+  slice(1:9) %>%
+  ggplot(aes(x = fct_reorder(course_title, u_grad), y = u_grad)) + geom_col() + coord_flip()
 ```
 ### Scene 3
 
